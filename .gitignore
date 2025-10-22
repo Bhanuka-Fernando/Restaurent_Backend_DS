@@ -19,3 +19,4 @@ replay_pid*
 *.jar
 *.war
 *.ear
+orderpayment/src/main/resources/application.properties

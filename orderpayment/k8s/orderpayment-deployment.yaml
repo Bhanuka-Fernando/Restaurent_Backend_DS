@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orderpayment-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orderpayment
+  template:
+    metadata:
+      labels:
+        app: orderpayment
+    spec:
+      containers:
+        - name: orderpayment
+          image: bhanukafd/orderpayment
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orderpayment-service
+spec:
+  type: ClusterIP
+  selector:
+    app: orderpayment
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
