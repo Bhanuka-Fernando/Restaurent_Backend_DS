@@ -18,7 +18,7 @@ public class Order {
     private String id;
     private String customerId;
     private List<OrderItem> items;
-    private double totalPrice;
+    private Double totalPrice;
     private String status;
     private LocalDateTime createdAt;
     private String orderImage;
@@ -26,4 +26,5 @@ public class Order {
     private String email;
     private String deliveryLocation;
     private String restaurantName;
+    private String customerAddress;
 }

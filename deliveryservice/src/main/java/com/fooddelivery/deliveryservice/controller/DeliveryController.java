@@ -15,13 +15,6 @@ public class DeliveryController {
     @Autowired
     private DeliveryService deliveryService;
 
-    // Get all deliveries assigned to a rider
-    @GetMapping("/rider/{riderId}")
-    public ResponseEntity<List<Delivery>> getAssignedDeliveries(@PathVariable String riderId) {
-        List<Delivery> deliveries = deliveryService.getDeliveriesForRider(riderId);
-        return ResponseEntity.ok(deliveries);
-    }
-
     // Create a new delivery
     @PostMapping
     public ResponseEntity<Delivery> createDelivery(@RequestBody Delivery delivery) {
@@ -32,7 +25,12 @@ public class DeliveryController {
     // Update the delivery status
     @PutMapping("/{id}/status")
     public ResponseEntity<Delivery> updateDeliveryStatus(@PathVariable String id, @RequestParam String status) {
-        Delivery updatedDelivery = deliveryService.updateDeliveryStatus(id, status);
-        return ResponseEntity.ok(updatedDelivery);
+        Delivery updated = deliveryService.updateDeliveryStatus(id, status);
+        return ResponseEntity.ok(updated);
+    }
+
+    @GetMapping("/rider/{email}")
+    public ResponseEntity<List<Delivery>> getAssignedDeliveries(@PathVariable String email){
+        return ResponseEntity.ok(deliveryService.getDeliveriesForRider(email));
     }
 }

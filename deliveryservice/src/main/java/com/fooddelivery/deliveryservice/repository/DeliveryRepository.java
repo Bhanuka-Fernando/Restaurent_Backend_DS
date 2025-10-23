@@ -17,4 +17,6 @@ public interface DeliveryRepository extends MongoRepository<Delivery, String> {
 
     // Find deliveries by delivery status (e.g., "pending", "in-transit", "delivered")
     List<Delivery> findByStatus(String status);
+
+    List<Delivery> findByRiderEmail(String riderEmail);
 }

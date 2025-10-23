@@ -14,7 +14,60 @@ public class Rider {
     private String vehicle;
     private String email;
     private String password;
+    private String zone;
+    private double lat;
+    private double lng;
+    private String status;
+    private int currentLoad;
+    private int maxConcurrent;
 
+    public String getZone() {
+        return zone;
+    }
+
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public int getCurrentLoad() {
+        return currentLoad;
+    }
+
+    public void setCurrentLoad(int currentLoad) {
+        this.currentLoad = currentLoad;
+    }
+
+    public int getMaxConcurrent() {
+        return maxConcurrent;
+    }
+
+    public void setMaxConcurrent(int maxConcurrent) {
+        this.maxConcurrent = maxConcurrent;
+    }
     // Getters and setters
     public String getId() {
         return id;

@@ -17,7 +17,10 @@ public class RiderService {
 
     // Register rider and return the saved rider object (with ID)
     public Rider registerRider(Rider rider) {
-        return riderRepository.save(rider); // Save rider and return the saved object (with ID)
+        if (rider.getStatus() == null) rider.setStatus("AVAILABLE");
+        rider.setCurrentLoad(0);
+        if (rider.getMaxConcurrent() <= 0) rider.setMaxConcurrent(1);
+        return riderRepository.save(rider);
     }
 
     // Authenticate rider during login

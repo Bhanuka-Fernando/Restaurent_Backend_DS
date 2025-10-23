@@ -1,6 +1,9 @@
 package com.fooddelivery.orderpayment.services;
 
+import com.fooddelivery.orderpayment.dto.PaymentSucceededEvent;
+import com.fooddelivery.orderpayment.kafka.PaymentProducer;
 import com.fooddelivery.orderpayment.model.Payment;
+import com.fooddelivery.orderpayment.repository.OrderRepository;
 import com.fooddelivery.orderpayment.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,34 @@ public class PaymentService {
 
     @Autowired
     private PaymentRepository paymentRepository;
+    @Autowired
+    private PaymentProducer paymentProducer;
+    @Autowired
+    private OrderRepository orderRepository;
+
+    private void maybePublishPaymentSuccess(Payment payment){
+        if(payment == null) return;
+        String status = payment.getPaymentStatus() != null ? payment.getPaymentStatus() : payment.getStatus();
+        if(status == null) return;
+
+        if("SUCCESS".equalsIgnoreCase(status)){
+            var orderOpt = orderRepository.findById(payment.getOrderId());
+            orderOpt.ifPresent(order -> {
+                var firstItem = order.getItems() != null && !order.getItems().isEmpty() ? order.getItems().get(0) : null;
+                var evt = PaymentSucceededEvent.builder()
+                        .orderId(payment.getOrderId())
+                        .customerId(order.getCustomerId())
+                        .customerAddress(order.getDeliveryLocation()) // rename if different
+                        .totalPrice(order.getTotalPrice() != null ? order.getTotalPrice().doubleValue() : null)
+                        .restaurantId(firstItem != null ? firstItem.getRestaurantId() : null)
+                        .restaurantName(firstItem != null ? firstItem.getRestaurantName() : null)
+                        .paidAtIso(payment.getPaidAt() != null ? payment.getPaidAt().toString() : null)
+                        .build();
+
+                paymentProducer.publishPaymentSuccess(evt);
+            });
+        }
+    }
 
     public Payment savePayment(String paymentIdFromStripe, String customerId, String orderId, Long amount, String status) {
         Payment payment = new Payment();
@@ -24,12 +55,16 @@ public class PaymentService {
         payment.setPaymentStatus(status);
         payment.setPaidAt(LocalDateTime.now());
 
-        return paymentRepository.save(payment);
+        Payment saved = paymentRepository.save(payment);
+        maybePublishPaymentSuccess(saved);
+        return saved;
     }
 
     public Payment savePaymentDirect(Payment payment) {
         payment.setPaidAt(LocalDateTime.now());
-        return paymentRepository.save(payment);
+        Payment saved = paymentRepository.save(payment);
+        maybePublishPaymentSuccess(saved);
+        return saved;
     }
 
     // For getting all payments
@@ -43,7 +78,7 @@ public class PaymentService {
     }
 
     public Payment updatePayment(String id, Payment updatedPayment) {
-        return paymentRepository.findById(id).map(payment -> {
+        Payment saved =  paymentRepository.findById(id).map(payment -> {
             payment.setPaymentIdFromStripe(updatedPayment.getPaymentIdFromStripe());
             payment.setCustomerId(updatedPayment.getCustomerId());
             payment.setOrderId(updatedPayment.getOrderId());
@@ -52,7 +87,11 @@ public class PaymentService {
             payment.setPaidAt(LocalDateTime.now());
             return paymentRepository.save(payment);
         }).orElseThrow(() -> new RuntimeException("Payment not found with id " + id));
+
+        maybePublishPaymentSuccess(saved);
+        return saved;
     }
+
 
     public void deletePayment(String id) {
         paymentRepository.deleteById(id);

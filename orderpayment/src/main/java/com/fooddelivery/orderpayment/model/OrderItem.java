@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class OrderItem {
     private String itemId;
     private String restaurantId;
+    private String restaurantName;
     private String name;
     private int quantity;
     private double price;

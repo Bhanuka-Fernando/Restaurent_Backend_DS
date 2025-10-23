@@ -3,6 +3,7 @@ package com.fooddelivery.deliveryservice.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
 import java.util.Date;
 
 @Document(collection = "deliveries")
@@ -11,30 +12,36 @@ public class Delivery {
     @Id
     private String id;
     private String orderId;
+    private String restaurantId;
+    private String restaurantName;
+    private String restaurantAddress;
     private String customerId;
     private String customerAddress; // New field for customer's address
     private String deliveryPersonnelId; // Rider's ID (assigned to delivery)
     private String status; // e.g., "pending", "in-transit", "delivered"
     private String location; // Pickup address or coordinates
-    private Date deliveryTime; // Timestamp of delivery
+    private Instant deliveryTime; // Timestamp of delivery
     private double orderAmount; // 💵 Total value of order (new field)
+    private String riderEmail;
+    private Instant createdAt;
 
-    // Constructor (with customerAddress and orderAmount included)
-    public Delivery(String orderId, String customerId, String customerAddress, String deliveryPersonnelId, String status, String location, Date deliveryTime, double orderAmount) {
+    public Delivery(String id, String orderId, String restaurantId, String restaurantName, String restaurantAddress, String customerId, String customerAddress, String deliveryPersonnelId, String status, String location, Instant deliveryTime, double orderAmount, String riderEmail, Instant createdAt) {
+        this.id = id;
         this.orderId = orderId;
+        this.restaurantId = restaurantId;
+        this.restaurantName = restaurantName;
+        this.restaurantAddress = restaurantAddress;
         this.customerId = customerId;
-        this.customerAddress = customerAddress; // Setting the customer address
+        this.customerAddress = customerAddress;
         this.deliveryPersonnelId = deliveryPersonnelId;
         this.status = status;
         this.location = location;
         this.deliveryTime = deliveryTime;
         this.orderAmount = orderAmount;
+        this.riderEmail = riderEmail;
+        this.createdAt = createdAt;
     }
 
-    // Empty constructor (required by Spring Data)
-    public Delivery() {}
-
-    // Getters and Setters
     public String getId() {
         return id;
     }
@@ -51,6 +58,30 @@ public class Delivery {
         this.orderId = orderId;
     }
 
+    public String getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(String restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
+    public String getRestaurantName() {
+        return restaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
+    }
+
+    public String getRestaurantAddress() {
+        return restaurantAddress;
+    }
+
+    public void setRestaurantAddress(String restaurantAddress) {
+        this.restaurantAddress = restaurantAddress;
+    }
+
     public String getCustomerId() {
         return customerId;
     }
@@ -60,11 +91,11 @@ public class Delivery {
     }
 
     public String getCustomerAddress() {
-        return customerAddress; // Get customer address
+        return customerAddress;
     }
 
     public void setCustomerAddress(String customerAddress) {
-        this.customerAddress = customerAddress; // Set customer address
+        this.customerAddress = customerAddress;
     }
 
     public String getDeliveryPersonnelId() {
@@ -91,11 +122,11 @@ public class Delivery {
         this.location = location;
     }
 
-    public Date getDeliveryTime() {
+    public Instant getDeliveryTime() {
         return deliveryTime;
     }
 
-    public void setDeliveryTime(Date deliveryTime) {
+    public void setDeliveryTime(Instant deliveryTime) {
         this.deliveryTime = deliveryTime;
     }
 
@@ -105,5 +136,21 @@ public class Delivery {
 
     public void setOrderAmount(double orderAmount) {
         this.orderAmount = orderAmount;
+    }
+
+    public String getRiderEmail() {
+        return riderEmail;
+    }
+
+    public void setRiderEmail(String riderEmail) {
+        this.riderEmail = riderEmail;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 }
